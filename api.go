@@ -25,11 +25,21 @@ func newError(text string) error {
 }
 
 type Client interface {
+	// Get returns value by key or NotFound if key not exist or expired
 	Get(key string) (interface{}, error)
+
+	// Set updates key/value with provided ttl
 	Set(key string, value interface{}, ttl time.Duration) error
+
+	// Remove delete key from storage
 	Remove(key string) error
+
+	// Keys returns list of live keys in storage
 	Keys() ([]string, error)
 
+	// GetIndex returns element of stored list by index
 	GetIndex(key string, index int) (interface{}, error)
+
+	// GetDict returns element of stored dictionary by key
 	GetDict(dictName string, key string) (interface{}, error)
 }
