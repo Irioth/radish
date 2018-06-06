@@ -93,7 +93,7 @@ func (r *RadishClient) readAnswer() (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	result = result[:len(result)-1]
+	result = strings.TrimSpace(result)
 
 	s := strings.SplitN(result, " ", 2)
 	switch s[0] {

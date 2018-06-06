@@ -55,7 +55,7 @@ func (s *Server) handleConn(c net.Conn) {
 			}
 			break
 		}
-		cmd = cmd[:len(cmd)-1]
+		cmd = strings.TrimSpace(cmd)
 
 		result, err := s.proceedCmd(cmd)
 		if err != nil {
