@@ -22,12 +22,14 @@ Radish is a toy K/V storage with TTL support inspired by Redis.
 
 ###### Supported operations
 
+```
 - GET <key>	              - retrive value by key
 - SET <key> <ttl> <value> - set key/value with ttl
 - REMOVE <key>            - remove key from store
 - KEYS                    - list all live keys
 - GETINDEX <key> <index>  - retrive element by index from array value
 - GETDICT <dict> <key>    - retrive element by key from dictionary value
+```
 
 ### Usage
 
@@ -127,7 +129,6 @@ There are two types of responses:
 
 ###### Example
 
-```
 	SET mykey 0 {"name":"Alex", "balance": -1}
 	OK
 
@@ -142,6 +143,3 @@ There are two types of responses:
 
 	KEYS
 	OK ["mykey"]
-```
-
-
