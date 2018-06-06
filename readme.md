@@ -6,7 +6,7 @@ Radish is a toy K/V storage with TTL support inspired by Redis.
 
 1. checkout, build and install
 
-		go get github.com/Irioth/radish
+		go get github.com/Irioth/radish/...
 
 2. run
 

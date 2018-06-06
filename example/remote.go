@@ -1,4 +1,6 @@
-package example
+// +build ignore
+
+package main
 
 import (
 	"fmt"
@@ -7,7 +9,7 @@ import (
 	"github.com/Irioth/radish"
 )
 
-func main_remote() {
+func main() {
 	c, err := radish.Open("127.0.0.1:1234")
 	if err != nil {
 		panic(err)
@@ -16,18 +18,21 @@ func main_remote() {
 
 	v, err := c.Get("key")
 
-	fmt.Printf("%#v\n", err)
-	fmt.Printf("%#v\n", v)
+	fmt.Println("Value:", v, "Error:", err)
 
-	c.Set("key", map[string]interface{}{"value1": "value1", "value2": "value2"}, 5*time.Minute)
-	for i := 0; i < 6; i++ {
-		// time.Sleep(time.Minute)
-		v, err = c.GetDict("key", "value1")
-		fmt.Printf("%#v\n", err)
-		fmt.Printf("%#v\n", v)
-		time.Sleep(time.Minute)
-	}
+	c.Set("dict", map[string]interface{}{"value1": "value1", "value2": "value2"}, time.Second)
+	v, _ = c.GetDict("dict", "value2")
+	fmt.Println("Retrived from dict", v)
 
-	fmt.Printf("%#v\n", err)
-	fmt.Printf("%#v\n", v)
+	c.Set("list", []interface{}{"elem1", "elem2"}, time.Second)
+	v, _ = c.GetIndex("list", 1)
+	fmt.Println("Retrived from list", v)
+
+	c.Set("expire", "some", time.Nanosecond)
+	c.Set("removed", "removed", radish.NoExpiration)
+	c.Remove("removed")
+
+	keys, _ := c.Keys()
+	fmt.Println("Keys", keys)
+
 }
