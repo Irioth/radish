@@ -98,7 +98,7 @@ func (r *RadishClient) readAnswer() (interface{}, error) {
 	s := strings.SplitN(result, " ", 2)
 	switch s[0] {
 	case "OK":
-		if len(s[1]) == 0 {
+		if len(s) <= 1 {
 			return nil, nil
 		}
 		var v interface{}
