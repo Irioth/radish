@@ -11,7 +11,7 @@ import (
 // (for example https://github.com/patrickmn/go-cache or https://github.com/karlseguin/ccache),
 // this is here exclusively for fun and educational purposes.
 
-// simple cuncurrent epoch based in-memory cache with no size limit and only ttl expiration
+// simple cuncurrent epoch based cache with only ttl expiration
 
 const buckets = 3 // minimum 3
 
@@ -73,7 +73,7 @@ func (c *cache) set(key string, value interface{}, ttl time.Duration) {
 	c.setw(key, wrapped{value, time.Now(), ttl, false})
 }
 
-// put dumb value into cache
+// put tomb value into cache
 func (c *cache) remove(key string) {
 	c.setw(key, wrapped{removed: true})
 }
@@ -82,15 +82,18 @@ func (c *cache) remove(key string) {
 func (c *cache) keys() []string {
 	result := map[string]bool{}
 	cur := atomic.LoadInt32(&c.epoch)
+	// collect keys with expiration status from last epoch firstly
 	c.bucket[last(cur)].Range(func(key, value interface{}) bool {
 		result[key.(string)] = value.(wrapped).expired()
 		return true
 	})
+	// then collect them from current epoch
 	c.bucket[cur].Range(func(key, value interface{}) bool {
 		result[key.(string)] = value.(wrapped).expired()
 		return true
 	})
 
+	// take only live ones
 	list := []string{}
 	for key, expired := range result {
 		if !expired {
@@ -101,11 +104,11 @@ func (c *cache) keys() []string {
 	return list
 }
 
-// we expect that calls to nextEpoch occurs rare, so not concurrent writes to last epoch exist at this moment
+// we expect that calls to nextEpoch occurs rare, so no concurrent writes to last epoch exist at this moment
 func (c *cache) nextEpoch() {
 	// steps order important!
 	cur := atomic.LoadInt32(&c.epoch)
-	// copy life values from last epoch
+	// copy live values from last epoch
 	c.bucket[last(cur)].Range(func(key, value interface{}) bool {
 		if !value.(wrapped).expired() {
 			c.bucket[cur].LoadOrStore(key, value)
